@@ -71,9 +71,9 @@ def get_todo_by_id(id : int , db: Session = Depends(get_db)):
 def get_all_todo(db: Session = Depends(get_db)):
     try:
         all_todo = crud.retrieve_all_todo(db)
-        data = []
+        response = []
         for row in all_todo:
-            response ={  
+            data ={  
                 "status": 200,
                 "todo_id": row.id,
                 "todo_title": row.title,
@@ -81,8 +81,8 @@ def get_all_todo(db: Session = Depends(get_db)):
                 "created_at": row.created_at,
                 "updated_at": row.updated_at
             }
-            data.append(response)
-        return data
+            response.append(data)
+        return response
     except Exception as e:
         print(e)
         response = {
@@ -92,3 +92,25 @@ def get_all_todo(db: Session = Depends(get_db)):
         }
         return response
 
+
+#delete todo by id
+@app.post("/api/v1/todo/delete/by/id")
+def del_todo_by_id(id: int, db: Session = Depends(get_db)):
+    try:
+        crud.delete_by_id(
+            db,
+            todo_id=id
+        )
+        response = {
+            "status": 200,
+            "message": "Todo record deleted",
+            "todo_id": id,
+        }
+        return response
+    except Exception as e:
+        response = {
+            "status": 404,
+            "message": "Something went wrong",
+            "reason": e,
+        }
+        return response

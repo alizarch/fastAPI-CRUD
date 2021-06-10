@@ -28,3 +28,19 @@ def retrieve_all_todo(db: Session):
         models.todo_model
     ).all()
     return all_todo
+
+
+def delete_by_id(db: Session, todo_id: int):
+    del_by_id = db.query(
+        models.todo_model
+    ).filter(
+        models.todo_model.id == todo_id
+    ).delete()
+    db.commit()
+    return del_by_id
+    
+def delete_all_todo(db: Session):
+    del_all_todo = db.query(
+        models.todo_model
+    ).delete()
+    return del_all_todo
