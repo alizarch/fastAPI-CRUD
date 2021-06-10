@@ -33,14 +33,12 @@ def create_todo(title: str, discription: str, db: Session = Depends(get_db)):
             "todo_description ": insert_todo.discription,
         }
         return response
-    except Exception as e:
+    except:
         response = {
-            "status": 404,
+            "status": 400,
             "message": "Something went wrong",
-            "reason": e,
         }
         return response
-
 
 #retrieve todo by id
 @app.post("/api/v1/todo/retrieve/by/id")
@@ -50,6 +48,13 @@ def get_todo_by_id(id : int , db: Session = Depends(get_db)):
             db,
             todo_id = id
         )
+        if retrieve_todo is None:
+            response = {
+                "status": 200,
+                "message": "Record not found",
+            }
+            return response
+         
         response = {
             "status": 200,
             "todo_id": retrieve_todo.id,
@@ -59,11 +64,10 @@ def get_todo_by_id(id : int , db: Session = Depends(get_db)):
             "updated_at": retrieve_todo.updated_at
         }
         return response
-    except Exception as e:
+    except:
         response = {
-            "status": 404,
+            "status": 400,
             "message": "Something went wrong",
-            "reason": e,
         }
         return response
 
@@ -72,6 +76,13 @@ def get_todo_by_id(id : int , db: Session = Depends(get_db)):
 def get_all_todo(db: Session = Depends(get_db)):
     try:
         all_todo = crud.retrieve_all_todo(db)
+        if all_todo is None:
+            response = {
+                "status": 200,
+                "message": "Record not found",
+            }
+            return response
+         
         response = []
         for row in all_todo:
             data ={  
@@ -84,54 +95,61 @@ def get_all_todo(db: Session = Depends(get_db)):
             }
             response.append(data)
         return response
-    except Exception as e:
+    except:
         print(e)
         response = {
-            "status": 404,
+            "status": 400,
             "message": "Something went wrong",
-            "reason": e,
         }
         return response
-
 
 #delete todo by id
 @app.post("/api/v1/todo/delete/by/id")
 def del_todo_by_id(id: int, db: Session = Depends(get_db)):
     try:
-        crud.delete_by_id(
+        del_by_id = crud.delete_by_id(
             db,
             todo_id=id
         )
+        if del_by_id is None:
+            response = {
+                "status": 200,
+                "message": "Record not found",
+            }
+            return response
         response = {
             "status": 200,
             "message": "Todo record deleted",
             "todo_id": id,
         }
         return response
-    except Exception as e:
+    except:
         response = {
-            "status": 404,
+            "status": 400,
             "message": "Something went wrong",
-            "reason": e,
         }
         return response
-
 
 #delete all todo 
 @app.post("/api/v1/delete/all/todo")
 def del_all_todo(db: Session = Depends(get_db)):
     try:
-        crud.delete_all_todo(db)
+        dell_all =crud.delete_all_todo(db)
+        if dell_all is None:
+            response = {
+                "status": 200,
+                "message": "Record not found",
+            }
+            return response
         response = {
             "status": 200,
             "message": "Todo record deleted",
         }
         return response
-    except Exception as e:
+    except:
         response = {
-            "status": 404,
+            "status": 400,
             "message": "Something went wrong",
-            "reason": e,
         }
         return response
 
@@ -145,7 +163,12 @@ def update_todo_by_id(todo_id : int , new_title: str, new_discription: str, db: 
             new_title=new_title,
             new_discription=new_discription,
         )
-        print(update)
+        if update is None:
+            response = {
+                "status": 200,
+                "message": "Record not found",
+            }
+            return response
         response = {
             "status": 200,
             "message": "TODO updated successfully",
@@ -156,11 +179,9 @@ def update_todo_by_id(todo_id : int , new_title: str, new_discription: str, db: 
             "updated_at": update.updated_at
         }
         return response
-    except Exception as e:
-        print(e)
+    except:
         response = {
-            "status": 404,
+            "status": 400,
             "message": "Something went wrong",
-            "reason": e,
         }
         return response
