@@ -41,8 +41,7 @@ def create_todo(title: str, discription: str, db: Session = Depends(get_db)):
         return response
 
 
-
-#create todo by id
+#retrieve todo by id
 @app.post("/api/v1/todo/retrieve/by/id")
 def get_todo_by_id(id : int , db: Session = Depends(get_db)):
     try:
@@ -66,3 +65,30 @@ def get_todo_by_id(id : int , db: Session = Depends(get_db)):
             "reason": e,
         }
         return response
+
+#retrieve all todo
+@app.post("/api/v1/todo/retrieve/all/todo")
+def get_all_todo(db: Session = Depends(get_db)):
+    try:
+        all_todo = crud.retrieve_all_todo(db)
+        data = []
+        for row in all_todo:
+            response ={  
+                "status": 200,
+                "todo_id": row.id,
+                "todo_title": row.title,
+                "todo_description ": row.discription,
+                "created_at": row.created_at,
+                "updated_at": row.updated_at
+            }
+            data.append(response)
+        return data
+    except Exception as e:
+        print(e)
+        response = {
+            "status": 404,
+            "message": "Something went wrong",
+            "reason": e,
+        }
+        return response
+

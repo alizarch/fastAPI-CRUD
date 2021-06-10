@@ -21,3 +21,10 @@ def retrieve_todo_by_id(db: Session, todo_id: int):
     ).first()
     
     return todo
+
+
+def retrieve_all_todo(db: Session):
+    all_todo = db.query(
+        models.todo_model
+    ).all()
+    return all_todo
