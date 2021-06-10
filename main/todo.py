@@ -1,5 +1,6 @@
 from fastapi import Depends, FastAPI
 from sqlalchemy.orm import Session
+from sqlalchemy.util.langhelpers import portable_instancemethod
 from database import SessionLocal, engine
 import models
 import crud
@@ -127,6 +128,36 @@ def del_all_todo(db: Session = Depends(get_db)):
         }
         return response
     except Exception as e:
+        response = {
+            "status": 404,
+            "message": "Something went wrong",
+            "reason": e,
+        }
+        return response
+
+#update todo
+@app.post("/api/v1/todo/update")
+def update_todo_by_id(todo_id : int , new_title: str, new_discription: str, db: Session = Depends(get_db)):
+    try:
+        update = crud.update_todo(
+            db,
+            todo_id = todo_id,
+            new_title=new_title,
+            new_discription=new_discription,
+        )
+        print(update)
+        response = {
+            "status": 200,
+            "message": "TODO updated successfully",
+            "todo_id": update.id,
+            "todo_title": update.title,
+            "todo_description ": update.discription,
+            "created_at": update.created_at,
+            "updated_at": update.updated_at
+        }
+        return response
+    except Exception as e:
+        print(e)
         response = {
             "status": 404,
             "message": "Something went wrong",
