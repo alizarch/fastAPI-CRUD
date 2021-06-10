@@ -43,4 +43,5 @@ def delete_all_todo(db: Session):
     del_all_todo = db.query(
         models.todo_model
     ).delete()
+    db.commit()
     return del_all_todo
